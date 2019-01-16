@@ -6,28 +6,26 @@ class Scoreboard extends Component {
     lastBowledText: '-'
   }
 
-  tallyScores = () => {
-      const scores = this.state.scores
-      const total = scores.reduce((accumulator, currVal, currIdx, arraySrc ) => {
-          let tally = 0
-          const strike = currVal[0] === 10
-          const spare = currVal[0] + currVal[1] === 10 && currVal[0] !== 10
-          const remainingScores = [].concat.apply([], scores.slice(currIdx+1))
-
-          if(strike && currIdx < 9) {
-              tally += remainingScores[0]>>0
-              tally += remainingScores[1]>>0
-          } else if(spare) {
-              tally += remainingScores[0]>>0
-          }
-          tally += currVal.reduce((a, b) => a + b, 0)
-
-          return accumulator + tally
-      }, 0)
-      this.setState({total})
+  score = () => {
+    const scores = this.state.scores
+    const total = scores.reduce((accumulator, currVal, currIdx, arraySrc ) => {
+      let tally = 0
+      const strike = currVal[0] === 10
+      const spare = currVal[0] + currVal[1] === 10 && currVal[0] !== 10
+      const remainingScores = [].concat.apply([], scores.slice(currIdx+1))
+      if(strike && currIdx < 9) {
+        tally += remainingScores[0]>>0
+        tally += remainingScores[1]>>0
+      } else if(spare) {
+        tally += remainingScores[0]>>0
+      }
+      tally += currVal.reduce((a, b) => a + b, 0)
+      return accumulator + tally
+    }, 0)
+    this.setState({total})
   }
 
-  addScore = () => {
+  roll = () => {
     let { scores, bowled } = this.state
     let lastFrame = scores[scores.length-1]
     let lastBowledText = ''+bowled
@@ -42,13 +40,13 @@ class Scoreboard extends Component {
       if (bowled === 10) lastBowledText = 'X'
     }
     this.setState(prevState => ({ scores, lastBowledText }) )
-    this.tallyScores()
+    this.score()
   }
 
   updateBowledValue = (evt) => {
     let bowled = evt.target.value>>0
     this.setState({
-        bowled
+      bowled
     })
   }
 
@@ -59,7 +57,7 @@ class Scoreboard extends Component {
         <p>Last Ball Score: {last}</p>
         <p>Current score: {total}</p>
         <input value={this.state.bowled} onChange={evt => this.updateBowledValue(evt)} />
-        <button onClick={this.addScore}>Update Scores</button>
+        <button onClick={this.roll}>Roll</button>
       </div>
     )
   }
